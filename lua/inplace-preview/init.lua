@@ -1,15 +1,13 @@
 local M = {}
 local state = {}
 
-local function get_config()
-    return {
-        preview_cmd = vim.g.inplace_preview_cmd or "cat",
-        toggle_key = vim.g.inplace_preview_toggle_key or "<leader>p",
-    }
-end
+local config = {
+    preview_cmd = "cat",  -- default fallback
+    toggle_key = "<leader>p",
+}
 
-function M.setup()
-    local config = get_config()
+function M.setup(opts)
+    config = vim.tbl_extend("force", config, opts or {})
     
     -- Set up autocommands to prevent editing preview buffers
     vim.api.nvim_create_augroup("InplacePreview", { clear = true })
@@ -138,8 +136,6 @@ function M.run_preview_command(content)
     if not content or content == "" then
         return nil
     end
-    
-    local config = get_config()
     
     -- Create temporary file
     local temp_file = vim.fn.tempname()
