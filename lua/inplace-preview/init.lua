@@ -9,21 +9,8 @@ local config = {
 function M.setup(opts)
     config = vim.tbl_extend("force", config, opts or {})
     
-    -- Set up autocommands to prevent editing preview buffers
     vim.api.nvim_create_augroup("InplacePreview", { clear = true })
-    
-    vim.api.nvim_create_autocmd("BufModifiedSet", {
-        group = "InplacePreview",
-        callback = function(args)
-            local buf = args.buf
-            if state[buf] and state[buf].is_preview then
-                -- Prevent modification of preview view
-                vim.api.nvim_buf_set_option(buf, "modified", false)
-                vim.notify("Buffer is in preview mode - toggle off to edit", vim.log.levels.WARN)
-            end
-        end,
-    })
-    
+
     -- Clean up when buffer is deleted
     vim.api.nvim_create_autocmd("BufDelete", {
         group = "InplacePreview",
